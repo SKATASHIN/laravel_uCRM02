@@ -1,5 +1,12 @@
 <script setup>
-  import { ref } from 'vue' 
+  import { ref, onMounted } from 'vue' 
+
+  onMounted(() => { 
+    axios.get('/api/user') 
+    .then( res => { 
+    console.log(res) 
+  }) 
+})
 
   const isShow = ref(false) 
   const toggleStatus = () => { isShow.value = !isShow.value}
