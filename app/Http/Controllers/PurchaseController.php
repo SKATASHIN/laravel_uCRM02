@@ -119,9 +119,9 @@ class PurchaseController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function edit(Purchase $purchase)
-    {
+    {   
         $purchase = Purchase::find($purchase->id);
-
+        
         $allItems = Item::select('id', 'name', 'price')
         ->get();
 
@@ -129,8 +129,8 @@ class PurchaseController extends Controller
 
         foreach($allItems as $allItem){
             $quantity = 0;
-            foreach($purchase->items as $item) {
-                if($allItem->id === $item->id) {
+            foreach($purchase->items as $item){
+                if($allItem->id === $item->id){
                     $quantity = $item->pivot->quantity;
                 }
             }
@@ -141,18 +141,19 @@ class PurchaseController extends Controller
                 'quantity' => $quantity,
             ]);
         }
-
+        
         // dd($items);
-        $order = Order::groupBy('id') 
-        ->where('id', $purchase->id) 
-        ->selectRaw('id, customer_name, 
-        customer_id, status, created_at')
-        ->get(); 
+        $order = Order::groupBy('id')
+        ->where('id', $purchase->id)
+        ->selectRaw('id, customer_id, 
+        customer_name, status, created_at')
+        ->get();
 
-        return Inertia::render('Purchases"/Edit', [
+        return Inertia::render('Purchases/Edit', [
             'items' => $items,
-            'order' => $order,
+            'order' => $order
         ]);
+
     }
 
     /**
@@ -164,7 +165,34 @@ class PurchaseController extends Controller
      */
     public function update(UpdatePurchaseRequest $request, Purchase $purchase)
     {
-        //
+        DB::beginTransaction();
+
+        try{
+        // dd($request, $purchase);
+        $purchase->status = $request->status;
+        $purchase->save();
+
+        $items = [];
+
+        foreach($request->items as $item){
+            $items = $items + [
+                $item['id'] => [
+                    'quantity' => $item['quantity']
+                ]
+            ];
+
+        }
+
+        // dd($request);
+        $purchase->items()->sync($items);
+
+        DB::commit();
+        return to_route('dashboard');
+
+        } catch(\Exception $e){
+            DB::rollBack();
+        }
+
     }
 
     /**
