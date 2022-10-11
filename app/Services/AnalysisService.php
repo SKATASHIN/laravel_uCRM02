@@ -34,7 +34,7 @@ class AnalysisService
         ->groupBy('date');
 
         $data = DB::table($query)  //日別の合計クエリ
-        ->groupBy('date') 
+        ->groupBy('date')   //
         ->selectRaw('date, sum(totalPerPurchase) as total') 
         ->get();   
 
