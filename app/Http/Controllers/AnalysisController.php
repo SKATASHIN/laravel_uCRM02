@@ -113,8 +113,8 @@ class AnalysisController extends Controller
             {
                 array_push($eachCount, [         //ここでエラーが出ているぽい
                     'rank' => $rank, 
-                    'r' => $rCount,  
-                    'f' => $fCount,  
+                    'r' => $rCount[$i],  
+                    'f' => $fCount[$i],  
                     'm' => $mCount[$i], 
                 ]);  
                 $rank--; // rankを1ずつ減らす 
