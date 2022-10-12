@@ -200,26 +200,30 @@ class AnalysisController extends Controller
 
 
 
-        //ランク毎の数を計算する 
+        // 5.ランク毎の数を計算する
         $total = DB::table($subQuery)->count();
 
-        $rCount = DB::table($subQuery) 
-            ->groupBy('r') 
-            ->selectRaw('r, count(r)') 
-            ->orderBy('r', 'desc') 
-            ->pluck('count(r)'); 
+        $rCount = DB::table($subQuery)
+        ->rightJoin('ranks', 'ranks.rank', '=', 'r')
+        ->groupBy('rank')
+        ->selectRaw('rank as r, count(r)')
+        ->orderBy('r', 'desc')
+        ->pluck('count(r)');
+        // dd($rCount->get());
 
-        $fCount = DB::table($subQuery) 
-            ->groupBy('f') 
-            ->selectRaw('f, count(f)') 
-            ->orderBy('f', 'desc') 
-            ->pluck('count(f)'); 
+        $fCount = DB::table($subQuery)
+        ->rightJoin('ranks', 'ranks.rank', '=', 'f')
+        ->groupBy('rank')
+        ->selectRaw('rank as f, count(f)')
+        ->orderBy('f', 'desc')
+        ->pluck('count(f)');
 
-        $mCount = DB::table($subQuery) 
-            ->groupBy('m') 
-            ->selectRaw('m, count(m)') 
-            ->orderBy('m', 'desc') 
-            ->pluck('count(m)');
+        $mCount = DB::table($subQuery)
+        ->rightJoin('ranks', 'ranks.rank', '=', 'm')
+        ->groupBy('rank')
+        ->selectRaw('rank as m, count(m)')
+        ->orderBy('m', 'desc')
+        ->pluck('count(m)');
 
             $eachCount = []; // Vue側に渡すようの空の配列 
             $rank = 5; // 初期値5 
